@@ -1,32 +1,27 @@
 window.onload = function(){
     var window = {
-        width: 200,
-        height: 200
+        width: 100,
+        height: 100
     };
     var mouse = {
         x: 0,
-        y: 0,
-        clicked: false
+        y: 0
     };
     var canvas = document.querySelector("canvas");
     var ctx = canvas.getContext("2d");
-    var maximumNumberOfRecursiveIterations = 128;
-    var zoom = 1;
+    var maximumNumberOfRecursiveIterations = 32;
 
     canvas.width = window.width;
     canvas.height = window.height;
     
     //constant for julia set equation
     var constant = math.complex(0.28, 0.01);
-
-    //how much fractal moves when clicked.
-    var pan = math.complex(0, 0);
     
     //pixelToPoint converts XY pixel coordinates to complex numbers.
     //A complex number is a number that can be expressed as a point (so a+b(i))
     //This takes the X and Y coordinates for a pixel, divides them to get the percentage of the overall...
     //width and height of the window, and returns the percentage on a point from -1 to +1.
-    let pixelToPoint = (x,y) => math.complex((x / window.width) * 2 - 1, 1 - (y / window.height) * 2).div(zoom).add(pan);
+    let pixelToPoint = (x,y) => math.complex((x / window.width) * 2 - 1, 1 - (y / window.height) * 2);
 
     //pointToColour simply represents a point as a colour, wavy dude.
     function pointToColour(point) {
@@ -58,11 +53,6 @@ window.onload = function(){
     }
 
     canvas.addEventListener('pointermove', function(event){
-        //don't move after the first click.
-        if(mouse.clicked) {
-            return;
-        }
-
         mouse.x = event.clientX-canvas.offsetLeft;
         mouse.y = event.clientY-canvas.offsetTop;
         constant = pixelToPoint(mouse.x, mouse.y);
@@ -75,18 +65,8 @@ window.onload = function(){
     });
 
     canvas.addEventListener('click', function(event){
-        //Ignore first click.
-        if(!mouse.clicked) {
-            mouse.clicked = true;
-            return;
-        }
-
         mouse.x = event.clientX - canvas.offsetLeft;
         mouse.y = event.clientY - canvas.offsetTop;
-
-        pan = pixelToPoint(mouse.x, mouse.y);
-
-        zoom *= 2;
 
         update();
     });
