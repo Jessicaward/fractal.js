@@ -43,9 +43,14 @@ window.onload = function(){
     }
 
     function draw() {
-        ctx.fillStyle = pointToColour(constant);
-        ctx.fillRect(mouse.x, mouse.y, 1, 1);
+        for(var x = 0; x < window.width; x++) {
+            for(var y = 0; y < window.height; y++) {
+                ctx.fillStyle = pointToColour(pixelToPoint(x, y));
+                ctx.fillRect(x, y, 1, 1);
+            }
+        }
     }
 
     canvas.addEventListener('pointermove', move);
+    update();
 };
