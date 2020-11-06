@@ -25,11 +25,12 @@ window.onload = function(){
     //pointToColour simply represents a point as a colour, wavy dude.
     let pointToColour = (point) => `rgb(${point.re * 255}, ${point.im * 255}, 0)`;
 
-    function update(){
+    function update() {
         console.log(constant.toString());
+        draw();
     }
     
-    function move(event){
+    function move(event) {
         mouse.x = event.clientX-canvas.offsetLeft;
         mouse.y = event.clientY-canvas.offsetTop;
         constant = pixelToPoint(mouse.x, mouse.y);
@@ -40,5 +41,11 @@ window.onload = function(){
     
         update();
     }
+
+    function draw() {
+        ctx.fillStyle = pointToColour(constant);
+        ctx.fillRect(mouse.x, mouse.y, 1, 1);
+    }
+
     canvas.addEventListener('pointermove', move);
 };
