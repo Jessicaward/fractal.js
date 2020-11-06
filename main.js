@@ -1,7 +1,7 @@
 window.onload = function(){
     var window = {
-        width: 100,
-        height: 100
+        width: 200,
+        height: 200
     };
     var mouse = {
         x: 0,
@@ -10,7 +10,7 @@ window.onload = function(){
     };
     var canvas = document.querySelector("canvas");
     var ctx = canvas.getContext("2d");
-    var maximumNumberOfRecursiveIterations = 64;
+    var maximumNumberOfRecursiveIterations = 128;
     var zoom = 1;
 
     canvas.width = window.width;
@@ -35,42 +35,12 @@ window.onload = function(){
     }
 
     function update() {
-        console.log(constant.toString() + " at " + zoom + "X");
-        draw();
-    }
-
-    function click(event) {
-        //Ignore first click.
-        if(!mouse.clicked) {
-            mouse.clicked = true;
-            return;
+        for(var x = 0; x < window.width; x++) {
+            for(var y = 0; y < window.height; y++) {
+                ctx.fillStyle = pointToColour(pixelToPoint(x, y));
+                ctx.fillRect(x, y, 1, 1);
+            }
         }
-
-        mouse.x = event.clientX - canvas.offsetLeft;
-        mouse.y = event.clientY - canvas.offsetTop;
-
-        pan = pixelToPoint(mouse.x, mouse.y);
-
-        zoom *= 2;
-
-        update();
-    }
-    
-    function move(event) {
-        //don't move after the first click.
-        if(mouse.clicked) {
-            return;
-        }
-
-        mouse.x = event.clientX-canvas.offsetLeft;
-        mouse.y = event.clientY-canvas.offsetTop;
-        constant = pixelToPoint(mouse.x, mouse.y);
-    
-        //round the constant to the nearest 0.01
-        constant.re = math.round(constant.re*100)/100;
-        constant.im = math.round(constant.im*100)/100;
-    
-        update();
     }
 
     //Recursive function that applies simple equation:
@@ -87,16 +57,39 @@ window.onload = function(){
         return julia(z, i+1);
     }
 
-    function draw() {
-        for(var x = 0; x < window.width; x++) {
-            for(var y = 0; y < window.height; y++) {
-                ctx.fillStyle = pointToColour(pixelToPoint(x, y));
-                ctx.fillRect(x, y, 1, 1);
-            }
+    canvas.addEventListener('pointermove', function(event){
+        //don't move after the first click.
+        if(mouse.clicked) {
+            return;
         }
-    }
 
-    canvas.addEventListener('pointermove', move);
-    canvas.addEventListener('click', click);
+        mouse.x = event.clientX-canvas.offsetLeft;
+        mouse.y = event.clientY-canvas.offsetTop;
+        constant = pixelToPoint(mouse.x, mouse.y);
+
+        //round the constant to the nearest 0.01
+        constant.re = math.round(constant.re*100)/100;
+        constant.im = math.round(constant.im*100)/100;
+
+        update();
+    });
+
+    canvas.addEventListener('click', function(event){
+        //Ignore first click.
+        if(!mouse.clicked) {
+            mouse.clicked = true;
+            return;
+        }
+
+        mouse.x = event.clientX - canvas.offsetLeft;
+        mouse.y = event.clientY - canvas.offsetTop;
+
+        pan = pixelToPoint(mouse.x, mouse.y);
+
+        zoom *= 2;
+
+        update();
+    });
+
     update();
 };
