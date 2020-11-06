@@ -5,18 +5,24 @@ window.onload = function(){
     };
     var canvas = document.querySelector("canvas");
     var ctx = canvas.getContext("2d");
-    var maximumNumberOfRecursiveIterations = 64;
+    var maximumNumberOfRecursiveIterations = 128;
 
     canvas.width = window.width;
     canvas.height = window.height;
     
+    //list of cool fractals I've found
+    var startingFractals = [
+        {x: 137, y: 119},
+        {x: 34, y: 52},
+        {x: 133, y: 81},
+        {x: 126, y: 51},
+        {x: 94, y: 18}
+    ];
+
     //constant for julia set equation
     var constant = math.complex(0.28, 0.01);
     var relativeDiff = 2;
-    var randomFractal = {
-        x: Math.floor(Math.random() * window.width),
-        y: Math.floor(Math.random() * window.height)
-    }
+    var startingFractal = startingFractals[Math.floor(Math.random() * startingFractals.length)];
     
     //pixelToPoint converts XY pixel coordinates to complex numbers.
     //A complex number is a number that can be expressed as a point (so a+b(i))
@@ -55,7 +61,7 @@ window.onload = function(){
 
     //change fractal every 500 ms
     setInterval(function() {
-        constant = pixelToPoint(random(randomFractal.x - relativeDiff, randomFractal.x + relativeDiff), random(randomFractal.y - relativeDiff, randomFractal.y + relativeDiff));
+        constant = pixelToPoint(random(startingFractal.x - relativeDiff, startingFractal.x + relativeDiff), random(startingFractal.y - relativeDiff, startingFractal.y + relativeDiff));
 
         //round the constant to the nearest 0.01
         constant.re = math.round(constant.re*100)/100;
@@ -63,6 +69,4 @@ window.onload = function(){
 
         update();
     }, 50);
-
-    update();
 };
