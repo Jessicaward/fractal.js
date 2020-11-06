@@ -1,7 +1,7 @@
 window.onload = function(){
     var window = {
-        width: 100,
-        height: 100
+        width: 200,
+        height: 200
     };
     var mouse = {
         x: 0,
@@ -9,7 +9,7 @@ window.onload = function(){
     };
     var canvas = document.querySelector("canvas");
     var ctx = canvas.getContext("2d");
-    var maximumNumberOfRecursiveIterations = 32;
+    var maximumNumberOfRecursiveIterations = 64;
 
     canvas.width = window.width;
     canvas.height = window.height;
@@ -41,9 +41,7 @@ window.onload = function(){
     //Recursive function that applies simple equation:
     //f(z) = z^2 + c
     function julia(z, i = 0) {
-        console.log("julia");
-        z = z.mul(z);
-        z = z.add(constant);
+        z = z.mul(z).add(constant);
 
         if(math.abs(z) > 2 || i == maximumNumberOfRecursiveIterations) {
             return i;
@@ -60,13 +58,6 @@ window.onload = function(){
         //round the constant to the nearest 0.01
         constant.re = math.round(constant.re*100)/100;
         constant.im = math.round(constant.im*100)/100;
-
-        update();
-    });
-
-    canvas.addEventListener('click', function(event){
-        mouse.x = event.clientX - canvas.offsetLeft;
-        mouse.y = event.clientY - canvas.offsetTop;
 
         update();
     });
