@@ -3,10 +3,6 @@ window.onload = function(){
         width: 200,
         height: 200
     };
-    var mouse = {
-        x: 0,
-        y: 0
-    };
     var canvas = document.querySelector("canvas");
     var ctx = canvas.getContext("2d");
     var maximumNumberOfRecursiveIterations = 64;
@@ -16,12 +12,19 @@ window.onload = function(){
     
     //constant for julia set equation
     var constant = math.complex(0.28, 0.01);
+    var relativeDiff = 2;
+    var randomFractal = {
+        x: Math.floor(Math.random() * window.width),
+        y: Math.floor(Math.random() * window.height)
+    }
     
     //pixelToPoint converts XY pixel coordinates to complex numbers.
     //A complex number is a number that can be expressed as a point (so a+b(i))
     //This takes the X and Y coordinates for a pixel, divides them to get the percentage of the overall...
     //width and height of the window, and returns the percentage on a point from -1 to +1.
     let pixelToPoint = (x,y) => math.complex((x / window.width) * 2 - 1, 1 - (y / window.height) * 2);
+
+    let random = (min, max) => min + Math.random() * (max - min);
 
     //pointToColour simply represents a point as a colour, wavy dude.
     function pointToColour(point) {
@@ -50,17 +53,16 @@ window.onload = function(){
         return julia(z, i+1);
     }
 
-    canvas.addEventListener('pointermove', function(event){
-        mouse.x = event.clientX-canvas.offsetLeft;
-        mouse.y = event.clientY-canvas.offsetTop;
-        constant = pixelToPoint(mouse.x, mouse.y);
+    //change fractal every 500 ms
+    setInterval(function() {
+        constant = pixelToPoint(random(randomFractal.x - relativeDiff, randomFractal.x + relativeDiff), random(randomFractal.y - relativeDiff, randomFractal.y + relativeDiff));
 
         //round the constant to the nearest 0.01
         constant.re = math.round(constant.re*100)/100;
         constant.im = math.round(constant.im*100)/100;
 
         update();
-    });
+    }, 50);
 
     update();
 };
