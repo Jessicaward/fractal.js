@@ -9,6 +9,7 @@ window.onload = function(){
     };
     var canvas = document.querySelector("canvas");
     var ctx = canvas.getContext("2d");
+    var maximumNumberOfRecursiveIterations = 64;
     
     canvas.width = window.width;
     canvas.height = window.height;
@@ -23,7 +24,10 @@ window.onload = function(){
     let pixelToPoint = (x,y) => math.complex((x / window.width) * 2 - 1, 1 - (y / window.height) * 2);
 
     //pointToColour simply represents a point as a colour, wavy dude.
-    let pointToColour = (point) => `rgb(${point.re * 255}, ${point.im * 255}, 0)`;
+    function pointToColour(point) {
+        var percentage = julia(point) / maximumNumberOfRecursiveIterations;
+        return `rgb(${percentage * 255}, ${percentage * 255}, ${percentage * 255})`;
+    }
 
     function update() {
         console.log(constant.toString());
@@ -40,6 +44,19 @@ window.onload = function(){
         constant.im = math.round(constant.im*100)/100;
     
         update();
+    }
+
+    //Recursive function that applies simple equation:
+    //f(z) = z^2 + c
+    function julia(z, i = 0) {
+        z = z.mul(z);
+        z = z.add(constant);
+
+        if(math.abs(z) > 2 || i == maximumNumberOfRecursiveIterations) {
+            return i;
+        }
+
+        return julia(z, i+1);
     }
 
     function draw() {
